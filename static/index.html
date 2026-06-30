@@ -1,0 +1,231 @@
+File 6 of 7 — index.html (the dashboard you actually see)
+Its job in plain English: Everything so far has been invisible machinery. This is the face of the project — the screen a person looks at. It's the money-burning clock at the top, the ranked list of options with the best one glowing, the risk flags, and the two AI panels. When you open the app in your browser, this is what appears.
+A quick note on what this file is: the other files were Python (the language of our logic). This one is HTML and CSS and a little JavaScript — the three languages every web page is made of. Rough translation: HTML is the structure (what boxes exist), CSS is the styling (colors, spacing, making it look like a control room instead of a school project), and JavaScript is the behavior (what happens when you click a button). Don't worry about mastering these — I'll explain the parts that matter and you can treat the rest as "the paint."
+Important — this file goes in the static folder, NOT app. In the left sidebar, hover over the static folder → new file → name it exactly:
+index.html
+It's a long file because it contains all the styling. Paste the whole thing and save (Ctrl + S):
+html<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AOG Resolution Cockpit</title>
+<style>
+  :root {
+    --bg: #0c1116;
+    --panel: #141b23;
+    --panel-2: #1b242e;
+    --line: #2a3744;
+    --ink: #e6edf3;
+    --ink-dim: #8b9bab;
+    --amber: #ffb347;
+    --cyan: #38d4c8;
+    --red: #ff5c5c;
+    --yellow: #ffd166;
+    --green: #4ade80;
+    --mono: 'SF Mono', 'Roboto Mono', ui-monospace, monospace;
+    --sans: 'Inter', -apple-system, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--ink); font-family: var(--sans);
+    min-height: 100vh; line-height: 1.5;
+    background-image: radial-gradient(circle at 80% -10%, #16222e 0%, transparent 50%);
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 22px 80px; }
+  header { display: flex; align-items: baseline; justify-content: space-between;
+           border-bottom: 1px solid var(--line); padding-bottom: 18px; flex-wrap: wrap; gap: 12px; }
+  .brand { font-family: var(--mono); font-size: 13px; letter-spacing: 3px;
+           color: var(--cyan); text-transform: uppercase; }
+  h1 { font-size: 26px; font-weight: 600; letter-spacing: -0.5px; margin-top: 4px; }
+  .sub { color: var(--ink-dim); font-size: 13px; margin-top: 2px; }
+  .ai-pill { font-family: var(--mono); font-size: 11px; padding: 4px 10px;
+             border: 1px solid var(--line); border-radius: 20px; color: var(--ink-dim); }
+  .ai-on { color: var(--cyan); border-color: var(--cyan); }
+  .controls { display: flex; gap: 12px; margin: 24px 0; flex-wrap: wrap; }
+  button { font-family: var(--sans); font-size: 14px; font-weight: 500;
+           padding: 11px 20px; border-radius: 8px; border: 1px solid var(--line);
+           background: var(--panel-2); color: var(--ink); cursor: pointer;
+           transition: all .15s ease; }
+  button:hover { border-color: var(--cyan); transform: translateY(-1px); }
+  button.primary { background: var(--cyan); color: #06231f; border-color: var(--cyan); font-weight: 600; }
+  button:disabled { opacity: .4; cursor: wait; transform: none; }
+  .empty { text-align: center; padding: 90px 20px; color: var(--ink-dim); }
+  .empty .big { font-size: 18px; color: var(--ink); margin-bottom: 8px; }
+  .hidden { display: none; }
+  .event-head { background: var(--panel); border: 1px solid var(--line);
+                border-radius: 12px; padding: 22px; margin-bottom: 18px; }
+  .event-id { font-family: var(--mono); color: var(--amber); font-size: 12px; letter-spacing: 1px; }
+  .event-desc { font-size: 17px; margin: 8px 0 16px; }
+  .nogo { color: var(--red); font-weight: 600; }
+  .clock-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 14px; }
+  .metric { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .metric .label { font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px;
+                   text-transform: uppercase; color: var(--ink-dim); }
+  .metric .value { font-size: 24px; font-weight: 600; margin-top: 6px; font-family: var(--mono); }
+  .metric.clock .value { color: var(--amber); }
+  .metric.save .value { color: var(--green); }
+  .section-label { font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+                   text-transform: uppercase; color: var(--ink-dim); margin: 26px 0 12px; }
+  .opt { background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+         padding: 18px 20px; margin-bottom: 12px; position: relative;
+         display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: start; }
+  .opt.best { border-color: var(--cyan); box-shadow: 0 0 0 1px var(--cyan) inset; }
+  .best-tag { position: absolute; top: -9px; left: 18px; background: var(--cyan);
+              color: #06231f; font-size: 10px; font-weight: 700; letter-spacing: 1px;
+              padding: 2px 9px; border-radius: 4px; font-family: var(--mono); }
+  .opt .name { font-size: 16px; font-weight: 600; }
+  .opt .meta { color: var(--ink-dim); font-size: 13px; font-family: var(--mono); margin-top: 4px; }
+  .opt .flags { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+  .flag { font-size: 12px; color: var(--yellow); display: flex; gap: 6px; }
+  .flag::before { content: "▸"; color: var(--ink-dim); }
+  .cost { text-align: right; }
+  .cost .total { font-family: var(--mono); font-size: 22px; font-weight: 600; }
+  .cost .break { font-size: 11px; color: var(--ink-dim); font-family: var(--mono); margin-top: 4px; }
+  .risk { display: inline-block; font-family: var(--mono); font-size: 10px;
+          padding: 2px 8px; border-radius: 4px; letter-spacing: 1px; margin-top: 8px; }
+  .risk.low { background: rgba(74,222,128,.12); color: var(--green); }
+  .risk.medium { background: rgba(255,209,102,.12); color: var(--yellow); }
+  .risk.high { background: rgba(255,92,92,.14); color: var(--red); }
+  .ai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+  @media (max-width: 760px){ .ai-grid{ grid-template-columns: 1fr; } .opt{ grid-template-columns:1fr; } .cost{ text-align:left; } }
+  .ai-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+  .ai-card h3 { font-size: 13px; font-family: var(--mono); letter-spacing: 1px;
+                color: var(--cyan); text-transform: uppercase; margin-bottom: 10px; }
+  .ai-body { font-size: 14px; white-space: pre-wrap; color: var(--ink); }
+  .msg { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px;
+         padding: 12px; font-family: var(--mono); font-size: 12.5px; white-space: pre-wrap;
+         color: var(--ink-dim); margin-top: 10px; }
+  .msg .to { color: var(--cyan); font-size: 10px; letter-spacing: 1px; display: block; margin-bottom: 6px; }
+  .spinner { color: var(--ink-dim); font-size: 13px; font-family: var(--mono); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="brand">Aircraft-on-Ground · Resolution Cockpit</div>
+      <h1>AOG Decision Support</h1>
+      <div class="sub">Rank return-to-service paths by total cost — part price plus the downtime clock.</div>
+    </div>
+    <div class="ai-pill" id="aiPill">AI: checking…</div>
+  </header>
+
+  <div class="controls">
+    <button class="primary" id="newBtn" onclick="newEvent()">⚡ Simulate AOG event</button>
+    <button id="explainBtn" onclick="explain()" disabled>Generate AI recommendation</button>
+    <button id="coordBtn" onclick="coordinate()" disabled>Draft coordination messages</button>
+  </div>
+
+  <div id="empty" class="empty">
+    <div class="big">No active event</div>
+    <div>Simulate an AOG event to see the resolution paths ranked by what they truly cost.</div>
+  </div>
+
+  <div id="dash" class="hidden">
+    <div class="event-head">
+      <div class="event-id" id="evId"></div>
+      <div class="event-desc" id="evDesc"></div>
+      <div class="clock-row" id="metrics"></div>
+    </div>
+
+    <div class="section-label">Return-to-service options — ranked by total cost</div>
+    <div id="options"></div>
+
+    <div class="section-label">AI advisor</div>
+    <div class="ai-grid">
+      <div class="ai-card">
+        <h3>Recommendation</h3>
+        <div class="ai-body" id="explainOut"><span class="spinner">Press "Generate AI recommendation".</span></div>
+      </div>
+      <div class="ai-card">
+        <h3>Coordination drafts</h3>
+        <div class="ai-body" id="coordOut"><span class="spinner">Press "Draft coordination messages".</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let current = null;
+const fmt = n => '$' + Math.round(n).toLocaleString();
+
+async function checkStatus(){
+  try {
+    const r = await fetch('/api/status'); const d = await r.json();
+    const pill = document.getElementById('aiPill');
+    if (d.ai_enabled){ pill.textContent = 'AI: live'; pill.classList.add('ai-on'); }
+    else { pill.textContent = 'AI: template mode'; }
+  } catch(e){}
+}
+
+async function newEvent(){
+  const btn = document.getElementById('newBtn'); btn.disabled = true;
+  try {
+    const r = await fetch('/api/event/new', {method:'POST'});
+    current = await r.json();
+    render(current);
+    document.getElementById('explainBtn').disabled = false;
+    document.getElementById('coordBtn').disabled = false;
+    document.getElementById('explainOut').innerHTML = '<span class="spinner">Press "Generate AI recommendation".</span>';
+    document.getElementById('coordOut').innerHTML = '<span class="spinner">Press "Draft coordination messages".</span>';
+  } finally { btn.disabled = false; }
+}
+
+function render(data){
+  document.getElementById('empty').classList.add('hidden');
+  document.getElementById('dash').classList.remove('hidden');
+  const e = data.event, s = data.summary;
+  document.getElementById('evId').textContent = e.event_id + ' · ' + e.aircraft.operator + ' · ' + e.location_iata;
+  document.getElementById('evDesc').innerHTML = e.description.replace('NO-GO item — aircraft grounded.', '<span class="nogo">NO-GO item — aircraft grounded.</span>');
+
+  document.getElementById('metrics').innerHTML = `
+    <div class="metric clock"><div class="label">Downtime burn</div><div class="value">${fmt(s.hourly_downtime_cost)}/h</div></div>
+    <div class="metric"><div class="label">Best path total</div><div class="value">${fmt(s.best_total_cost)}</div></div>
+    <div class="metric"><div class="label">Time to service</div><div class="value">${s.best_hours}h</div></div>
+    <div class="metric save"><div class="label">Saved vs worst</div><div class="value">${fmt(s.savings_vs_worst)}</div></div>
+  `;
+
+  document.getElementById('options').innerHTML = data.ranked.map((r,i) => {
+    const o = r.option;
+    const flags = r.risk_flags.map(f => `<div class="flag">${f}</div>`).join('');
+    return `<div class="opt ${i===0?'best':''}">
+      ${i===0?'<span class="best-tag">RECOMMENDED</span>':''}
+      <div>
+        <div class="name">${o.supplier_name}</div>
+        <div class="meta">${o.source_type} · ${o.condition} · from ${o.supplier_iata} · ${r.total_hours}h</div>
+        <span class="risk ${r.risk_level}">${r.risk_level} risk</span>
+        <div class="flags">${flags}</div>
+      </div>
+      <div class="cost">
+        <div class="total">${fmt(r.total_cost_usd)}</div>
+        <div class="break">part ${fmt(o.unit_price_usd)}<br>downtime ${fmt(r.downtime_cost_usd)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function explain(){
+  const out = document.getElementById('explainOut');
+  out.innerHTML = '<span class="spinner">Thinking through the tradeoff…</span>';
+  const r = await fetch('/api/explain', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({event_id: current.event.event_id})});
+  const d = await r.json();
+  out.textContent = d.explanation || d.error;
+}
+
+async function coordinate(){
+  const out = document.getElementById('coordOut');
+  out.innerHTML = '<span class="spinner">Drafting messages…</span>';
+  const r = await fetch('/api/coordinate', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({event_id: current.event.event_id})});
+  const d = await r.json();
+  out.innerHTML =
+    `<div class="msg"><span class="to">→ TO SUPPLIER</span>${(d.to_supplier||'').trim()}</div>
+     <div class="msg"><span class="to">→ TO OPS CONTROL</span>${(d.to_ops||'').trim()}</div>`;
+}
+
+checkStatus();
+</script>
+</body>
+</html>
