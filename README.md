@@ -57,18 +57,6 @@ export ANTHROPIC_API_KEY=your-key-here
 
 Python · FastAPI · vanilla HTML/CSS/JS · Anthropic API
 
-## Roadmap
-
-- Replace synthetic data with a real maintenance-system (AMOS/TRAX) adapter
-- Live parts-marketplace integration for real-time availability
-- Historical learning: predict customs/docs delays from past events
-A few things worth understanding about this README, because they're deliberate:
-It opens with one bold sentence that explains the whole project. A recruiter skimming twenty repos decides in five seconds whether to keep reading. That sentence does the convincing.
-It has a "Why this is interesting" section that explicitly spells out the clever bits — the counterintuitive insight, the swap-to-real design, the graceful degradation. Don't make the reader hunt for what's smart about your work; tell them. These are also exactly the things you'll talk about in an interview, so writing them down now rehearses your pitch.
-It includes clear run instructions. A project a recruiter can actually start in three commands feels real and finished. A project with no instructions feels abandoned.
-You'll notice it references screenshot.png — we'll add that image in a moment, after we run the app and capture it. A README with a screenshot looks dramatically more complete than one without, so that's a step we won't skip.
-
-That's all 7 files. Your project is fully written. Take a look at your left sidebar — you should see this structure:
 aog-cockpit/
 ├── app/
 │   ├── models.py
